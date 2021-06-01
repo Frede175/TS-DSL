@@ -1,23 +1,44 @@
-database dsl
-url "localhost"
-username "root"
-port 3306
+module PersonalData:
+	table User:
+	    id: int primary
+	    firstName: string
+	    lastName: string
+	    age: int
+	        constraint age >= 18
+	    phone: string?
+	        constraint "\\d{8}"
+	    email: string
+	        constraint "^\\S+@\\S+\\.\\S+$"
+	    address: Address?
 
-table User:
-    id: int primary
-    firstName: string
-    lastName: string
-    age: int
-        constraint age >= 18
-    phone: string?
-        constraint "\\d{8}"
-    email: string
-        constraint "^\\S+@\\S+\\.\\S+$"
-    address: Address?
+	table Address:
+	    id: string primary
+	    street: string
+	        constraint "^\\S+@\\S+\\.\\S+$"
+	    zipcode: int
+	    city: string
 
-table Address:
-    id: string primary
-    street: string
-        constraint "^\\S+@\\S+\\.\\S+$"
-    zipcode: int
-    city: string
+module Store<T> uses PersonalData:
+	table Stock:
+		id: int primary
+		count: int
+		item: T
+
+	table Order:
+		id: int primary
+		total: int
+		discount: int
+		lines: OrderLines[]
+		user: User
+
+	table OrderLines:
+		id: int primary
+		order: Order
+		item: T
+
+database Webshop uses Store<WebshopItem>:
+	table WebshopItem:
+		id: int primary
+		name: string
+		price: int
+		type: string

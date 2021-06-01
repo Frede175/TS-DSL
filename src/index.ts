@@ -1,10 +1,19 @@
 import dotenv from 'dotenv'
-import { getClient } from 'src/client/getClient'
+import {getClient} from 'src/client/getClient'
 
 dotenv.config()
 
 async function test() {
   const client = getClient()
+
+  /* Not able to be run due to limitations of the query engine.
+  const order = await client.order.findFirst({
+    where: {
+      id: {equals: 1}
+    },
+    include: { lines: { include: { item: { select: { name: true, price: true } } }}}
+  })
+   */
 
   const newLars = await client.user.create({
     firstName: 'Lars',
@@ -18,10 +27,10 @@ async function test() {
 
   const lars = await client.user.findFirst({
     where: {
-      id: { gte: 1 },
-      firstName: { contains: 'L' },
+      id: {gte: 1},
+      firstName: {contains: 'L'},
       lastName: 'Larsen',
-      NOT: { email: { contains: 'yahoo' } }
+      NOT: {email: {contains: 'yahoo'}}
     },
     select: {
       id: true,
